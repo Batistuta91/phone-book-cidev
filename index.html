@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ספר טלפונים</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: #e3f2fd;
+            color: black;
+            margin: 20px;
+        }
+
+        .company-info {
+            text-align: center;
+            background-color: #e3f2fd;
+            color: #000;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+            color: #0d47a1;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #0d47a1;
+            text-shadow: 2px 2px #90caf9;
+        }
+
+        .filter-section {
+            width: 80%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            flex: 1;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 35px 10px 10px;
+            box-sizing: border-box;
+            border: 1px solid #0d47a1;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #e3f2fd, #bbdefb);
+            transition: all 0.3s ease;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0d47a1;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 10px #90caf9;
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .button {
+            background: linear-gradient(90deg, #0d47a1, #1976d2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .button:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #0d47a1;
+            background-color: white;
+            margin: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            background-color: white;
+            color: black;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 12px;
+            border: 1px solid #0d47a1;
+        }
+
+        th {
+            background-color: #0d47a1;
+            color: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        th:hover {
+            background-color: #1976d2;
+        }
+
+        th::after {
+            content: "";
+            margin-right: 5px;
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+
+        th.sort-asc::after {
+            content: "↑";
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: "↓";
+            opacity: 1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e3f2fd;
+        }
+
+        tr:hover {
+            background-color: #bbdefb;
+        }
+
+        td button.contact-btn {
+            display: inline-block;
+            margin: 0 8px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            transition: transform 0.2s ease, color 0.3s ease;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        td button.contact-btn:hover {
+            transform: scale(1.3);
+            animation: none;
+        }
+
+        button.contact-btn i.fa-whatsapp {
+            color: #25D366;
+            text-shadow: 0 0 8px rgba(37, 211, 102, 0.5);
+        }
+
+        button.contact-btn i.fa-envelope {
+            color: #E63946;
+            text-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+        }
+
+        button.contact-btn:hover i.fa-whatsapp {
+            color: #1EBE57;
+        }
+
+        button.contact-btn:hover i.fa-envelope {
+            color: #C62828;
+        }
+
+        .favorite {
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.3s ease, transform 0.2s ease;
+            font-size: 20px;
+        }
+
+        .favorite.active {
+            color: #FFD700;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .favorite:hover {
+            transform: scale(1.3);
+        }
+
+        .favorites-section {
+            width: 80%;
+            margin: 0 auto 20px auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .favorites-section h2 {
+            color: #0d47a1;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .favorites-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .favorite-card {
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 150px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .favorite-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .favorite-position {
+            font-size: 0.8em;
+            color: #555;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .favorite-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .favorite-card button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 3px;
+            transition: transform 0.2s ease;
+        }
+
+        .favorite-card button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Floating menu styles */
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .floating-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0d47a1;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .floating-button:hover {
+            transform: scale(1.1);
+            background: #1976d2;
+        }
+
+        /* Enhanced modal styles for professional centered display */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            direction: rtl;
+            position: relative;
+            border: 1px solid #0d47a1;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #0d47a1;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #1976d2;
+        }
+
+        .modal-content label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+
+        .modal-content input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #0d47a1;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal-content input[type="number"]:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
+        }
+
+        .modal-content .button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 16px;
+            background: linear-gradient(90deg, #0d47a1, #1976d2);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content .button:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+        }
+
+       @media screen and (max-width: 768px) {
+    .filter-section {
+        width: 95%;
+        flex-direction: column;
+    }
+
+    .search-container {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 95%;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px 4px;
+    }
+
+    .company-info {
+        width: 95%;
+        margin: 0 auto 20px auto;
+    }
+
+    .favorites-section {
+        width: 95%;
+    }
+
+    .title {
+        font-size: 2em;
+    }
+
+    .mobile-view th:nth-child(2),
+    .mobile-view td:nth-child(2),
+    .mobile-view th:nth-child(3),
+    .mobile-view td:nth-child(3) {
+        display: none;
+    }
+
+    .table-container {
+        padding-bottom: 200px; /* Increased to ensure floating menu doesn't overlap */
+    }
+
+    .modal-content {
+        width: 95%;
+        max-width: 350px;
+        padding: 20px;
+    }
+}
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        tr.hidden {
+            display: none;
+        }
+
+        /* Dark mode styles */
+        .dark-mode {
+            background-color: #263238;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .company-info {
+            background-color: #37474f;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .company-info p {
+            color: #90caf9;
+        }
+
+        .dark-mode .title {
+            color: #90caf9;
+            text-shadow: 2px 2px #1a237e;
+        }
+
+        .dark-mode table {
+            background-color: #37474f;
+            color: #e0e0e0;
+        }
+
+        .dark-mode tr:nth-child(even) {
+            background-color: #455a64;
+        }
+
+        .dark-mode tr:hover {
+            background-color: #546e7a;
+        }
+
+        .dark-mode .filter-section,
+        .dark-mode .favorites-section {
+            background-color: #37474f;
+        }
+
+        .dark-mode .favorite-card {
+            background-color: #455a64;
+        }
+
+        .dark-mode .favorite-position {
+            color: #b0bec5;
+        }
+
+        .dark-mode .modal-content {
+            background-color: #37474f;
+            color: #e0e0e0;
+            border-color: #90caf9;
+        }
+
+        .dark-mode .modal-content label {
+            color: #90caf9;
+        }
+
+        .dark-mode .modal-content input[type="number"] {
+            background-color: #455a64;
+            border-color: #90caf9;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .modal-content .close {
+            color: #90caf9;
+        }
+
+        .dark-mode .modal-content .close:hover {
+            color: #bbdefb;
+        }
+
+        .dark-mode .modal-content .button {
+            background: linear-gradient(90deg, #1976d2, #90caf9);
+        }
+
+        @media print {
+            .filter-section, .floating-menu, button, .favorite, .modal {
+                display: none !important;
+            }
+
+            body, table {
+                width: 100%;
+                background-color: white;
+                color: black;
+            }
+
+            .company-info, table {
+                box-shadow: none;
+            }
+
+            tr.hidden {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="fade-in">
+    <div class="company-info">
+        <p><strong>כתובתנו:</strong> רחוב הבנאי 3, א.ת. גיל עמל, הוד השרון 4531903</p>
+        <p><strong>מספר מוביל:</strong> 073-7001212 ? <strong>מרכזייה:</strong> 3000 ? <strong>שלוחות:</strong> 073-7133XXX</p>
+        <p><strong>פקס ראשי:</strong> 09-7457000 ? <strong>פקס רכש:</strong> 09-7421219 ? <strong>פקס כוכי:</strong> 09-7450549 ? <strong>פקס הנה"ח אלקטרוניקה:</strong> 09-7420013</p>
+        <p><strong>חיוג לחו"ל:</strong> 013</p>
+        <p><strong>תאריך עדכון:</strong> 05.05.2025</p>
+    </div>
+
+    <h1 class="title">ספר טלפונים</h1>
+
+    <div class="filter-section">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="חיפוש..." aria-label="חיפוש אנשי קשר">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div>
+            <select id="departmentFilter" aria-label="סינון לפי מחלקה">
+                <option value="">כל המחלקות</option>
+            </select>
+            <button class="button" onclick="resetFilters()">איפוס סינון</button>
+            <button class="button" id="toggleFavoritesBtn" onclick="toggleFavorites()">
+                <i class="fas fa-star"></i> הצג מועדפים
+            </button>
+            <button class="button" onclick="exportContacts()">
+                <i class="fas fa-file-export"></i> ייצוא אנשי קשר
+            </button>
+        </div>
+    </div>
+
+    <div class="favorites-section" id="favoritesSection">
+        <h2>אנשי קשר מועדפים</h2>
+        <div class="favorites-list" id="favoritesList"></div>
+    </div>
+
+    <div class="table-container">
+        <table id="phoneBook">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">שם</th>
+                    <th onclick="sortTable(1)">תפקיד</th>
+                    <th onclick="sortTable(2)">שלוחה</th>
+                    <th onclick="sortTable(3)">טלפון</th>
+                    <th>צור קשר</th>
+                    <th>מועדף</th>
+                </tr>
+            </thead>
+            <tbody>
+               <tr>
+    <td>מני הירש</td>
+    <td>מנכ"ל</td>
+    <td>3133</td>
+    <td>052-2729360</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ למני הירש"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל למני הירש"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="מני הירש" aria-label="הוסף או הסר מני הירש ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="manny2@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>כוכי אסולין</td>
+    <td>סמנכ"לית כספים</td>
+    <td>3132</td>
+    <td>052-2588057</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לכוכי אסולין"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לכוכי אסולין"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="כוכי אסולין" aria-label="הוסף או הסר כוכי אסולין ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="kochi@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>בני גרינדלר</td>
+    <td>סמנכ"ל אלקטרומכאניקה</td>
+    <td>3144</td>
+    <td>052-2588055</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לבני גרינדלר"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לבני גרינדלר"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="בני גרינדלר" aria-label="הוסף או הסר בני גרינדלר ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="benny@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ישראל אוטניק</td>
+    <td>סמנכ"ל תפעול</td>
+    <td>3033</td>
+    <td>052-2448023</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לישראל אוטניק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לישראל אוטניק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ישראל אוטניק" aria-label="הוסף או הסר ישראל אוטניק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="israel@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליאת גולן-הרץ</td>
+    <td>מנהלת משאבי אנוש</td>
+    <td>3080</td>
+    <td>054-7376596</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליאת גולן-הרץ"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליאת גולן-הרץ"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליאת גולן-הרץ" aria-label="הוסף או הסר ליאת גולן-הרץ ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="HRliat@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ברי גליק</td>
+    <td>סמנכ"ל פיתוח עסקי</td>
+    <td>3135</td>
+    <td>052-5977297</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לברי גליק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לברי גליק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ברי גליק" aria-label="הוסף או הסר ברי גליק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="barry@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דנה בן ריטן</td>
+    <td>מנהלת מרקום</td>
+    <td>3005</td>
+    <td>054-5550132</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדנה בן ריטן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדנה בן ריטן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דנה בן ריטן" aria-label="הוסף או הסר דנה בן ריטן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="dana@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ארז פינקלשטיין</td>
+    <td>מנהל מערכות מידע</td>
+    <td>3134</td>
+    <td>054-7667786</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לארז פינקלשטיין"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לארז פינקלשטיין"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ארז פינקלשטיין" aria-label="הוסף או הסר ארז פינקלשטיין ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="erez@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>צחי אחרק</td>
+    <td>אחראי לוגיסטיקה</td>
+    <td>3062</td>
+    <td>052-3528037</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לצחי אחרק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לצחי אחרק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="צחי אחרק" aria-label="הוסף או הסר צחי אחרק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="tzahi@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דניאל חוברי</td>
+    <td>מנהל אבטחת איכות</td>
+    <td>3146</td>
+    <td>052-4267914</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדניאל חוברי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדניאל חוברי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דניאל חוברי" aria-label="הוסף או הסר דניאל חוברי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="daniel@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>רותי אמזלג</td>
+    <td>מנהלת חשבונות</td>
+    <td>3121</td>
+    <td>054-6550761</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לרותי אמזלג"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לרותי אמזלג"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="רותי אמזלג" aria-label="הוסף או הסר רותי אמזלג ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ruth@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>בת שבע סלמון</td>
+    <td>מנהלת חשבונות</td>
+    <td>3124</td>
+    <td>054-3970646</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לבת שבע סלמון"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לבת שבע סלמון"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="בת שבע סלמון" aria-label="הוסף או הסר בת שבע סלמון ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="batsheva@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>עפרה חג'בי</td>
+    <td>מנהלת חשבונות</td>
+    <td>3053</td>
+    <td>050-2003381</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לעפרה חג'בי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לעפרה חג'בי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="עפרה חג'בי" aria-label="הוסף או הסר עפרה חג'בי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ofra@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>עינת אוהב שלום</td>
+    <td>מנהלת חשבונות</td>
+    <td>3120</td>
+    <td>052-3342957</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לעינת אוהב שלום"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לעינת אוהב שלום"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="עינת אוהב שלום" aria-label="הוסף או הסר עינת אוהב שלום ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="einat@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ענת נחום</td>
+    <td>מנהלת חשבונות</td>
+    <td>3128</td>
+    <td>052-3701499</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לענת נחום"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לענת נחום"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ענת נחום" aria-label="הוסף או הסר ענת נחום ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="anat.n@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אלי מנחם</td>
+    <td>מנהל מכירות רוטרוניק</td>
+    <td>3066</td>
+    <td>052-2448095</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאלי מנחם"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאלי מנחם"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אלי מנחם" aria-label="הוסף או הסר אלי מנחם ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="elim@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שי שושן</td>
+    <td>מהנדס מכירות</td>
+    <td>3013</td>
+    <td>052-6801351</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשי שושן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשי שושן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שי שושן" aria-label="הוסף או הסר שי שושן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="shai.s@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ישעיה מערבי</td>
+    <td>מהנדס מכירות</td>
+    <td>3024</td>
+    <td>050-3008514</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לישעיה מערבי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לישעיה מערבי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ישעיה מערבי" aria-label="הוסף או הסר ישעיה מערבי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input hypergrok="hidden" value="yeshaia@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שי בנזינו</td>
+    <td>מנהל רכש</td>
+    <td>3090</td>
+    <td>052-3635981</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשי בנזינו"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשי בנזינו"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שי בנזינו" aria-label="הוסף או הסר שי בנזינו ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="shay@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליאת סוהן</td>
+    <td>ס.מנהל רכש</td>
+    <td>3093</td>
+    <td>050-6380076</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליאת סוהן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליאת סוהן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליאת סוהן" aria-label="הוסף או הסר ליאת סוהן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="liats@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ענת אטיאש</td>
+    <td>קניינית</td>
+    <td>3078</td>
+    <td>050-5722005</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לענת אטיאש"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לענת אטיאש"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ענת אטיאש" aria-label="הוסף או הסר ענת אטיאש ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="anatb@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דפני כגן</td>
+    <td>קניינית</td>
+    <td>3092</td>
+    <td>054-8330010</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדפני כגן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדפני כגן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דפני כגן" aria-label="הוסף או הסר דפני כגן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="daphne@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>לאה בן יהודה-לביד</td>
+    <td>קניינית</td>
+    <td>3101</td>
+    <td>054-4996577</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ ללאה בן יהודה-לביד"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל ללאה בן יהודה-לביד"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="לאה בן יהודה-לביד" aria-label="הוסף או הסר לאה בן יהודה-לביד ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="lea.b@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>בועז מנדלר</td>
+    <td>סמנכ"ל הנדסה</td>
+    <td>3075</td>
+    <td>052-8589442</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לבועז מנדלר"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לבועז מנדלר"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="בועז מנדלר" aria-label="הוסף או הסר בועז מנדלר ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="boaz@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אשר חוזה</td>
+    <td>FAE</td>
+    <td>3023</td>
+    <td>050-3008429</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאשר חוזה"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאשר חוזה"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אשר חוזה" aria-label="הוסף או הסר אשר חוזה ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="asherh@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>קמליה (קמי) ג'ורג'</td>
+    <td>FAE</td>
+    <td>3077</td>
+    <td>055-5535765</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לקמליה (קמי) ג'ורג'"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לקמליה (קמי) ג'ורג'"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="קמליה (קמי) ג'ורג'" aria-label="הוסף או הסר קמליה (קמי) ג'ורג' ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="kammy@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אסף רז</td>
+    <td>FAE</td>
+    <td>3086</td>
+    <td>050-3008430</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאסף רז"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאסף רז"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אסף רז" aria-label="הוסף או הסר אסף רז ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="assaf@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ראיין מוזס</td>
+    <td>FAE</td>
+    <td>3137</td>
+    <td>052-4599699</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לראיין מוזס"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לראיין מוזס"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ראיין מוזס" aria-label="הוסף או הסר ראיין מוזס ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ryan@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ישראל לב</td>
+    <td>FAE</td>
+    <td>3035</td>
+    <td>052-4375154</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לישראל לב"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לישראל לב"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ישראל לב" aria-label="הוסף או הסר ישראל לב ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="israel.l@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שרון אלמקייס ביטון</td>
+    <td>סמנכ"לית החטיבה</td>
+    <td>3148</td>
+    <td>052-4254958</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשרון אלמקייס ביטון"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשרון אלמקייס ביטון"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שרון אלמקייס ביטון" aria-label="הוסף או הסר שרון אלמקייס ביטון ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="sharon@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליז נשר</td>
+    <td>מת"לית RF</td>
+    <td>3136</td>
+    <td>052-2598030</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליז נשר"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליז נשר"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליז נשר" aria-label="הוסף או הסר ליז נשר ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="liz@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>בנצי מנשה</td>
+    <td>מנהל טכני</td>
+    <td>3110</td>
+    <td>052-6793777</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לבנצי מנשה"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לבנצי מנשה"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="בנצי מנשה" aria-label="הוסף או הסר בנצי מנשה ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="benzim@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>און נאור</td>
+    <td>FAE</td>
+    <td>3007</td>
+    <td>052-8531602</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאון נאור"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאון נאור"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="און נאור" aria-label="הוסף או הסר און נאור ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="onn@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>גבריאל רבינוביץ</td>
+    <td>FAE</td>
+    <td>3083</td>
+    <td>052-5554246</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לגבריאל רבינוביץ"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לגבריאל רבינוביץ"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="גבריאל רבינוביץ" aria-label="הוסף או הסר גבריאל רבינוביץ ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="gavriel@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>חנן שרת</td>
+    <td>FAE</td>
+    <td>3010</td>
+    <td>050-5809220</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לחנן שרת"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לחנן שרת"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="חנן שרת" aria-label="הוסף או הסר חנן שרת ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="hanan@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>איריס דרורי</td>
+    <td>מתאמת מכירות</td>
+    <td>3109</td>
+    <td>054-7706968</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאיריס דרורי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאיריס דרורי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="איריס דרורי" aria-label="הוסף או הסר איריס דרורי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="iris@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>מאי פינקלשטיין</td>
+    <td>מתאמת מכירות</td>
+    <td>3042</td>
+    <td>054-4499989</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ למאי פינקלשטיין"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל למאי פינקלשטיין"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="מאי פינקלשטיין" aria-label="הוסף או הסר מאי פינקלשטיין ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="may@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שגית בנזינו</td>
+    <td>סמנכ"ל מכירות</td>
+    <td>3143</td>
+    <td>052-2447972</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשגית בנזינו"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשגית בנזינו"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שגית בנזינו" aria-label="הוסף או הסר שגית בנזינו ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="sagit@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אופירה מאירי</td>
+    <td>צוות 10</td>
+    <td>3050</td>
+    <td>052-2588056</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאופירה מאירי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאופירה מאירי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אופירה מאירי" aria-label="הוסף או הסר אופירה מאירי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ofiram@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>מאיה טביבי</td>
+    <td>צוות 10</td>
+    <td>3051</td>
+    <td>052-8971309</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ למאיה טביבי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל למאיה טביבי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="מאיה טביבי" aria-label="הוסף או הסר מאיה טביבי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="maya@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דורין שריקי</td>
+    <td>צוות 10</td>
+    <td>3061</td>
+    <td>050-6794787</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדורין שריקי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדורין שריקי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דורין שריקי" aria-label="הוסף או הסר דורין שריקי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="dorins@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אלכס בירמן</td>
+    <td>צוות 10</td>
+    <td>3015</td>
+    <td>053-2843125</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאלכס בירמן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאלכס בירמן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אלכס בירמן" aria-label="הוסף או הסר אלכס בירמן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="alexandra@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ג'ניפר חכם</td>
+    <td>צוות 10</td>
+    <td>3041</td>
+    <td>054-5713600</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לג'ניפר חכם"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לג'ניפר חכם"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ג'ניפר חכם" aria-label="הוסף או הסר ג'ניפר חכם ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="jennifer@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליאת סגולם</td>
+    <td>צוות 20</td>
+    <td>3020</td>
+    <td>052-3637942</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליאת סגולם"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליאת סגולם"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליאת סגולם" aria-label="הוסף או הסר ליאת סגולם ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="liat@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליאת בקאל</td>
+    <td>צוות 20</td>
+    <td>3113</td>
+    <td>052-5440264</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליאת בקאל"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליאת בקאל"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליאת בקאל" aria-label="הוסף או הסר ליאת בקאל ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="liatbakal@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>חיה כהן</td>
+    <td>צוות 20</td>
+    <td>3091</td>
+    <td>052-6801350</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לחיה כהן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לחיה כהן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="חיה כהן" aria-label="הוסף או הסר חיה כהן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="haya@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>יפעת דורב</td>
+    <td>צוות 30</td>
+    <td>3106</td>
+    <td>052-5218475</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ ליפעת דורב"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל ליפעת דורב"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="יפעת דורב" aria-label="הוסף או הסר יפעת דורב ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ifat@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>גיטי דהרי</td>
+    <td>צוות 30</td>
+    <td>3082</td>
+    <td>050-9733731</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לגיטי דהרי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לגיטי דהרי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="גיטי דהרי" aria-label="הוסף או הסר גיטי דהרי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="giti@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שקמה בר יהודה</td>
+    <td>צוות 30</td>
+    <td>3085</td>
+    <td>052-5011165</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשקמה בר יהודה"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשקמה בר יהודה"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שקמה בר יהודה" aria-label="הוסף או הסר שקמה בר יהודה ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="shikma@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>עידית יונתן-אוטניק</td>
+    <td>צוות 40</td>
+    <td>3060</td>
+    <td>052-4783797</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לעידית יונתן-אוטניק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לעידית יונתן-אוטניק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="עידית יונתן-אוטניק" aria-label="הוסף או הסר עידית יונתן-אוטניק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="idit@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>שני שלהב</td>
+    <td>צוות 40</td>
+    <td>3043</td>
+    <td>054-6605803</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לשני שלהב"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לשני שלהב"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="שני שלהב" aria-label="הוסף או הסר שני שלהב ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="shani.s@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>סיוון גרין</td>
+    <td>צוות 40</td>
+    <td>3071</td>
+    <td>052-5374717</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לסיוון גרין"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לסיוון גרין"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="סיוון גרין" aria-label="הוסף או הסר סיוון גרין ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="sivang@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אילנית גוטמן-דניאל</td>
+    <td>צוות 40</td>
+    <td>3115</td>
+    <td>054-4590717</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאילנית גוטמן-דניאל"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאילנית גוטמן-דניאל"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אילנית גוטמן-דניאל" aria-label="הוסף או הסר אילנית גוטמן-דניאל ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="iligutman@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>רחלי חריר-מנדל</td>
+    <td>צוות 50</td>
+    <td>3022</td>
+    <td>052-8749967</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לרחלי חריר-מנדל"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לרחלי חריר-מנדל"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="רחלי חריר-מנדל" aria-label="הוסף או הס#pragma onceר רחלי חריר-מנדל ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="rachel@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>הילית בסון</td>
+    <td>צוות 50</td>
+    <td>3067</td>
+    <td>052-4485577</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ להילית בסון"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל להילית בסון"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="הילית בסון" aria-label="הוסף או הסר הילית בסון ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="hilit.b@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>מירי מריומה</td>
+    <td>צוות 50</td>
+    <td>3065</td>
+    <td>054-9840313</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ למירי מריומה"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל למירי מריומה"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="מירי מריומה" aria-label="הוסף או הסר מירי מריומה ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="miri@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אמיר איתן</td>
+    <td>סמנכ"ל החטיבה הגלובלית</td>
+    <td>3081</td>
+    <td>052-4267911</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאמיר איתן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאמיר איתן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אמיר איתן" aria-label="הוסף או הסר אמיר איתן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="amire@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>יעל הרבר-ברנק</td>
+    <td>מנהלת רכש</td>
+    <td>3112</td>
+    <td>054-2699821</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ ליעל הרבר-ברנק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל ליעל הרבר-ברנק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="יעל הרבר-ברנק" aria-label="הוסף או הסר יעל הרבר-ברנק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="yael@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>רונית שנפלד-וינר</td>
+    <td>מנהלת תיקי לקוחות</td>
+    <td>3070</td>
+    <td>052-3091922</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לרונית שנפלד-וינר"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לרונית שנפלד-וינר"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="רונית שנפלד-וינר" aria-label="הוסף או הסר רונית שנפלד-וינר ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ronit.s@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>צחי ברמלי</td>
+    <td>מנהל תיקי לקוחות</td>
+    <td>3139</td>
+    <td>050-3008631</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לצחי ברמלי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לצחי ברמלי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="צחי ברמלי" aria-label="הוסף או הסר צחי ברמלי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="tzahi.b@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דפנה גור</td>
+    <td>מכירות פנים</td>
+    <td>3040</td>
+    <td>052-2225667</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדפנה גור"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדפנה גור"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דפנה גור" aria-label="הוסף או הסר דפנה גור ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="daphna.g@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>לי עזרא</td>
+    <td>מכירות פנים</td>
+    <td>3006</td>
+    <td>054-2212022</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ ללי עזרא"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל ללי עזרא"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="לי עזרא" aria-label="הוסף או הסר לי עזרא ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="leee@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>יוסי דניאל</td>
+    <td>מנהל מחסן</td>
+    <td>3140</td>
+    <td>052-3413853</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ ליוסי דניאל"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל ליוסי דניאל"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="יוסי דניאל" aria-label="הוסף או הסר יוסי דניאל ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="yossid@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אופירה ניסים</td>
+    <td>ס.מ.מחסן</td>
+    <td>3141</td>
+    <td>052-3530330</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאופירה ניסים"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאופירה ניסים"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אופירה ניסים" aria-label="הוסף או הסר אופירה ניסים ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ofira@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>רז מצרי</td>
+    <td>משרד</td>
+    <td>3145</td>
+    <td>052-3356612</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לרז מצרי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לרז מצרי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="רז מצרי" aria-label="הוסף או הסר רז מצרי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="raz@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>ליאור אפק</td>
+    <td>מנהל מחסן קבלה</td>
+    <td>3142</td>
+    <td>052-3050533</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לליאור אפק"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לליאור אפק"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="ליאור אפק" aria-label="הוסף או הסר ליאור אפק ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="lior@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דני חרל"פ</td>
+    <td>מחסן קבלה</td>
+    <td>3108</td>
+    <td>054-7543550</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדני חרלפ"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדני חרלפ"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דני חרלפ" aria-label="הוסף או הסר דני חרלפ ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ware_rec@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>דודו מאיר</td>
+    <td>מחסן קבלה</td>
+    <td>3108</td>
+    <td>052-4267913</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדודו מאיר"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדודו מאיר"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דודו מאיר" aria-label="הוסף או הסר דודו מאיר ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="dudu@cudev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>גיא חבה-חורי</td>
+    <td>מחסן קבלה</td>
+    <td>3108</td>
+    <td>052-3477703</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לגיא חבה-חורי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לגיא חבה-חורי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="גיא חבה-חורי" aria-label="הוסף או הסר גיא חבה-חורי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="ware_rec@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אמיר הראל</td>
+    <td>אחראי דלפק</td>
+    <td>3147</td>
+    <td>050-3008548</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאמיר הראל"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאמיר הראל"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אמיר הראל" aria-label="הוסף או הסר אמיר הראל ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="amir@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>אברהם קאופמן</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>052-3298938</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאברהם קאופמן"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאברהם קאופמן"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אברהם קאופמן" aria-label="הוסף או הסר אברהם קאופמן ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>חיים אלקסלסי</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>058-7885888</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לחיים אלקסלסי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לחיים אלקסלסי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="חיים אלקסלסי" aria-label="הוסף או הסר חיים אלקסלסי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>קרלוס איבנייס</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>052-6827067</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לקרלוס איבנייס"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לקרלוס איבנייס"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="קרלוס איבנייס" aria-label="הוסף או הסר קרלוס איבנייס ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>גלריה</td>
+    <td></td>
+    <td>3008</td>
+    <td></td>
+</tr>
+<tr>
+    <td>דמיאן גנוט</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>054-5524694</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לדמיאן גנוט"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לדמיאן גנוט"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דמיאן גנוט" aria-label="הוסף או הסר דמיאן גנוט ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>רם שיינפלד</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>050-2163406</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לרם שיינפלד"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לרם שיינפלד"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="רם שיינפלד" aria-label="הוסף או הסר רם שיינפלד ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>איציק סבג</td>
+    <td>מחסנאי</td>
+    <td></td>
+    <td>054-7790644</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאיציק סבג"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאיציק סבג"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="איציק סבג" aria-label="הוסף או הסר איציק סבג ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="">
+    </td>
+</tr>
+<tr>
+    <td>אור ז'קלין חזני</td>
+    <td>דסק קבלה</td>
+    <td>3000</td>
+    <td>052-2458628</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לאור ז'קלין חזני"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לאור ז'קלין חזני"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="אור ז'קלין חזני" aria-label="הוסף או הסר אור ז'קלין חזני ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="reception@cidev.co.il">
+    </td>
+</tr>
+<tr>
+    <td>נדב צוברי</td>
+    <td>מ.גלובל</td>
+    <td>3072</td>
+    <td>054-6874725</td>
+    <td>
+        <button class="contact-btn" onclick="sendWhatsApp(this)" aria-label="שלח הודעה בוואטסאפ לנדב צוברי"><i class="fab fa-whatsapp"></i></button>
+        <button class="contact-btn" onclick="sendEmail(this)" aria-label="שלח אימייל לנדב צוברי"><i class="fas fa-envelope"></i></button>
+    </td>
+    <td>
+        <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="נדב צוברי" aria-label="הוסף או הסר נדב צוברי ממועדפים"></i>
+    </td>
+    <td style="display: none;">
+        <input type="hidden" value="nadav@cidev.co.il">
+    </td>
+</tr>
+            </tbody>
+     </table>
+</div>
+
+   <div class="floating-menu">
+        <div class="floating-button" onclick="toggleSettingsModal()" aria-label="פתח/סגור הגדרות">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="floating-button" onclick="toggleDarkMode()" aria-label="החלף מצב תצוגה כהה/בהיר">
+            <i class="fas fa-moon"></i>
+        </div>
+        <div class="floating-button" onclick="scrollToTop()" aria-label="גלול למעלה">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleSettingsModal()">×</span>
+            <h2>הגדרות גודל פונט</h2>
+            <label for="titleFontSize">גודל פונט כותרת ראשית (px):</label>
+            <input type="number" id="titleFontSize" min="16" max="72" value="40">
+            <label for="tableHeaderFontSize">גודל פונט כותרות טבלה (px):</label>
+            <input type="number" id="tableHeaderFontSize" min="12" max="72" value="16">
+            <label for="tableContentFontSize">גודל פונט תוכן טבלה (px):</label>
+            <input type="number" id="tableContentFontSize" min="10" max="72" value="14">
+            <button class="button" onclick="saveFontSettings()">שמור הגדרות</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize departments dynamically
+        const departments = [...new Set(Array.from(document.querySelectorAll('#phoneBook tbody tr')).map(row => row.cells[1].textContent))];
+        const departmentFilter = document.getElementById('departmentFilter');
+        departments.forEach(dept => {
+            if (dept) {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                departmentFilter.appendChild(option);
+            }
+        });
+
+        // Filter table based on search and department
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput').value.toUpperCase();
+            const deptFilter = document.getElementById('departmentFilter').value;
+            const table = document.getElementById('phoneBook');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        const txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(searchInput) > -1) {
+                            match = true;
+                        }
+                    }
+                }
+                if (deptFilter && td[1].textContent !== deptFilter) {
+                    match = false;
+                }
+                tr[i].style.display = match ? '' : 'none';
+            }
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('departmentFilter').value = '';
+            filterTable();
+        }
+
+        // Sort table
+        function sortTable(n) {
+            const table = document.getElementById('phoneBook');
+            let rows, switching = true, i, shouldSwitch, dir = 'asc', switchcount = 0;
+            const th = table.getElementsByTagName('th')[n];
+            Array.from(table.getElementsByTagName('th')).forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    const x = rows[i].getElementsByTagName('td')[n];
+                    const y = rows[i + 1].getElementsByTagName('td')[n];
+                    const xVal = x.textContent.toLowerCase();
+                    const yVal = y.textContent.toLowerCase();
+                    if (dir === 'asc') {
+                        if (xVal > yVal) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === 'desc') {
+                        if (xVal < yVal) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else if (switchcount === 0 && dir === 'asc') {
+                    dir = 'desc';
+                    switching = true;
+                }
+            }
+            th.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+
+        // Toggle favorites section
+        function toggleFavorites() {
+            const favoritesSection = document.getElementById('favoritesSection');
+            favoritesSection.style.display = favoritesSection.style.display === 'block' ? 'none' : 'block';
+            updateFavoritesList();
+        }
+
+        // Manage favorites
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function toggleFavorite(star) {
+            const name = star.dataset.name;
+            if (favorites.includes(name)) {
+                favorites = favorites.filter(fav => fav !== name);
+                star.classList.remove('active');
+            } else {
+                favorites.push(name);
+                star.classList.add('active');
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoritesList();
+        }
+
+        function updateFavoritesList() {
+            const favoritesList = document.getElementById('favoritesList');
+            favoritesList.innerHTML = '';
+            const table = document.getElementById('phoneBook');
+            favorites.forEach(fav => {
+                const row = Array.from(table.rows).find(r => r.cells[0]?.textContent === fav);
+                if (row) {
+                    const card = document.createElement('div');
+                    card.className = 'favorite-card';
+                    const email = row.cells[6]?.querySelector('input')?.value || '';
+                    const phone = row.cells[3]?.textContent || '';
+                    card.innerHTML = `
+                        <div class="favorite-name">${row.cells[0].textContent}</div>
+                        <div class="favorite-position">${row.cells[1].textContent}</div>
+                        <div class="favorite-actions">
+                            ${phone ? `<button onclick="sendWhatsAppFromFavorite('${phone}')" aria-label="שלח הודעה בוואטסאפ ל${row.cells[0].textContent}"><i class="fab fa-whatsapp"></i></button>` : ''}
+                            ${email ? `<button onclick="sendEmailFromFavorite('${email}')" aria-label="שלח אימייל ל${row.cells[0].textContent}"><i class="fas fa-envelope"></i></button>` : ''}
+                            <button onclick="removeFavorite('${fav}')" aria-label="הסר ${row.cells[0].textContent} ממועדפים"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    favoritesList.appendChild(card);
+                }
+            });
+        }
+
+        function removeFavorite(name) {
+            favorites = favorites.filter(fav => fav !== name);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            const star = document.querySelector(`.favorite[data-name="${name}"]`);
+            if (star) star.classList.remove('active');
+            updateFavoritesList();
+        }
+
+        // Initialize favorites on load
+        document.querySelectorAll('.favorite').forEach(star => {
+            if (favorites.includes(star.dataset.name)) {
+                star.classList.add('active');
+            }
+        });
+
+        // פונקציה לשליחת הודעת WhatsApp
+        function sendWhatsApp(button) {
+            const row = button.parentElement.parentElement;
+            const phoneNumber = row.cells[3]?.textContent?.trim();
+            if (phoneNumber) {
+                // הסר רווחים ותווים לא רצויים ממספר הטלפון
+                const cleanPhoneNumber = phoneNumber.replace(/[-\s]/g, '');
+                // בדוק אם המשתמש נמצא במכשיר נייד
+                const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
+                // הוסף את קידומת המדינה (972 עבור ישראל) והסר את ה-0 הראשון
+                const url = `${baseUrl}?phone=972${cleanPhoneNumber.slice(1)}`;
+                window.open(url, '_blank');
+            } else {
+                alert('מספר טלפון לא זמין');
+            }
+        }
+
+        // פונקציה לשליחת הודעת WhatsApp ממועדפים
+        function sendWhatsAppFromFavorite(phoneNumber) {
+            if (phoneNumber) {
+                // הסר רווחים ותווים לא רצויים ממספר הטלפון
+                const cleanPhoneNumber = phoneNumber.replace(/[-\s]/g, '');
+                // בדוק אם המשתמש נמצא במכשיר נייד
+                const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const baseUrl = isMobile ? 'https://api.whatsapp.com/send' : 'https://web.whatsapp.com/send';
+                // הוסף את קידומת המדינה (972 עבור ישראל) והסר את ה-0 הראשון
+                const url = `${baseUrl}?phone=972${cleanPhoneNumber.slice(1)}`;
+                window.open(url, '_blank');
+            } else {
+                alert('מספר טלפון לא זמין');
+            }
+        }
+
+        // Send Email
+        function sendEmail(button) {
+            const row = button.parentElement.parentElement;
+            const email = row.cells[6]?.querySelector('input')?.value;
+            if (email) {
+                const mailtoUrl = `mailto:${email}`;
+                window.open(mailtoUrl, '_self');
+            } else {
+                alert('כתובת אימייל לא זמינה');
+            }
+        }
+
+        function sendEmailFromFavorite(email) {
+            if (email) {
+                const mailtoUrl = `mailto:${email}`;
+                window.open(mailtoUrl, '_self');
+            } else {
+                alert('כתובת אימייל לא זמינה');
+            }
+        }
+
+        // Export contacts to CSV
+        function exportContacts() {
+            const table = document.getElementById('phoneBook');
+            const rows = Array.from(table.rows);
+            const csv = rows.map((row, index) => {
+                if (index === 0) return '"שם","תפקיד","שלוחה","טלפון","אימייל"';
+                const cells = Array.from(row.cells);
+                const name = cells[0]?.textContent || '';
+                const position = cells[1]?.textContent || '';
+                const extension = cells[2]?.textContent || '';
+                const phone = cells[3]?.textContent || '';
+                const email = cells[6]?.querySelector('input')?.value || '';
+                return `"${name.replace(/"/g, '""')}","${position.replace(/"/g, '""')}","${extension.replace(/"/g, '""')}","${phone.replace(/"/g, '""')}","${email.replace(/"/g, '""')}"`;
+            }).join('\n');
+
+            const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'phonebook.csv';
+            link.click();
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            const moonIcon = document.querySelector('.floating-button .fa-moon, .floating-button .fa-sun');
+            moonIcon.classList.toggle('fa-moon', !isDark);
+            moonIcon.classList.toggle('fa-sun', isDark);
+        }
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            const moonIcon = document.querySelector('.floating-button .fa-moon');
+            moonIcon.classList.remove('fa-moon');
+            moonIcon.classList.add('fa-sun');
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Apply mobile view automatically based on screen width
+        function applyMobileView() {
+            const table = document.getElementById('phoneBook');
+            if (window.innerWidth <= 768) {
+                table.classList.add('mobile-view');
+            } else {
+                table.classList.remove('mobile-view');
+            }
+        }
+
+// Settings Modal Functions
+ // Replace openSettingsModal and closeSettingsModal with toggleSettingsModal
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            const isDisplayed = modal.style.display === 'flex';
+            modal.style.display = isDisplayed ? 'none' : 'flex';
+            if (!isDisplayed) {
+                // Load saved settings or use defaults
+                const settings = JSON.parse(localStorage.getItem('fontSettings')) || {
+                    titleFontSize: 40,
+                    tableHeaderFontSize: 16,
+                    tableContentFontSize: 14
+                };
+                document.getElementById('titleFontSize').value = settings.titleFontSize;
+                document.getElementById('tableHeaderFontSize').value = settings.tableHeaderFontSize;
+                document.getElementById('tableContentFontSize').value = settings.tableContentFontSize;
+            }
+        }
+
+        // Update saveFontSettings to save to localStorage and close modal
+        function saveFontSettings() {
+            const settings = {
+                titleFontSize: Math.min(Math.max(parseInt(document.getElementById('titleFontSize').value, 10) || 40, 16), 72),
+                tableHeaderFontSize: Math.min(Math.max(parseInt(document.getElementById('tableHeaderFontSize').value, 10) || 16, 12), 72),
+                tableContentFontSize: Math.min(Math.max(parseInt(document.getElementById('tableContentFontSize').value, 10) || 14, 10), 72)
+            };
+            localStorage.setItem('fontSettings', JSON.stringify(settings));
+            applyFontSettings();
+            toggleSettingsModal();
+        }
+
+
+
+function applyFontSettings() {
+    const settings = JSON.parse(localStorage.getItem('fontSettings')) || {
+        titleFontSize: 40,
+        tableHeaderFontSize: 16,
+        tableContentFontSize: 14
+    };
+    document.querySelector('.title').style.fontSize = `${settings.titleFontSize}px`;
+    document.querySelectorAll('#phoneBook th').forEach(th => {
+        th.style.fontSize = `${settings.tableHeaderFontSize}px`;
+    });
+    document.querySelectorAll('#phoneBook td').forEach(td => {
+        td.style.fontSize = `${settings.tableContentFontSize}px`;
+    });
+}
+
+// Initialize font settings on page load
+document.addEventListener('DOMContentLoaded', applyFontSettings);
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterTable);
+        document.getElementById('departmentFilter').addEventListener('change', filterTable);
+        window.addEventListener('load', applyMobileView);
+        window.addEventListener('resize', applyMobileView);
+    </script>
+</body>
+</html>
