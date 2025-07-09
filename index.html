@@ -564,26 +564,112 @@
         .dark-mode .modal-content .button {
             background: linear-gradient(90deg, #1976d2, #90caf9);
         }
+@media print {
+    @page {
+        size: portrait;
+    }
 
-        @media print {
-            .filter-section, .floating-menu, button, .favorite, .modal {
-                display: none !important;
-            }
+/* Print styles - FIXED */
+@media print {
+    /* Hide screen elements */
+    .filter-section,
+    .floating-menu,
+    .favorites-section,
+    .modal,
+    .button,
+    .search-container,
+    .contact-btn {
+        display: none !important;
+    }
 
-            body, table {
-                width: 100%;
-                background-color: white;
-                color: black;
-            }
+    /* Show print elements */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12px;
+        margin: 0;
+        padding: 20px;
+    }
 
-            .company-info, table {
-                box-shadow: none;
-            }
+    .company-info {
+        background: white !important;
+        box-shadow: none !important;
+        border: 1px solid #000;
+        margin-bottom: 20px;
+    }
 
-            tr.hidden {
-                display: none !important;
-            }
-        }
+    .title {
+        font-size: 18px !important;
+        color: black !important;
+        text-shadow: none !important;
+        margin-bottom: 10px;
+    }
+
+    .table-container {
+        overflow: visible !important;
+    }
+
+    table {
+        width: 100% !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        font-size: 11px;
+    }
+
+    th, td {
+        padding: 6px !important;
+        border: 1px solid #000 !important;
+    }
+
+    th {
+        background: #f0f0f0 !important;
+        color: black !important;
+    }
+
+    tr:nth-child(even) {
+        background: #f9f9f9 !important;
+    }
+
+    tr:hover {
+        background: transparent !important;
+    }
+
+    /* Hide favorite stars in print */
+    .favorite {
+        display: none !important;
+    }
+
+    /* Hide contact buttons in print */
+    .contact-btn {
+        display: none !important;
+    }
+
+    /* Hide entire contact and favorite columns in print */
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(6),
+    td:nth-child(6) {
+        display: none !important;
+    }
+
+    /* Make sure table breaks properly across pages */
+    table {
+        page-break-inside: auto;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    th {
+        page-break-after: avoid;
+    }
+}
+
+
+
+
     </style>
 </head>
 <body class="fade-in">
@@ -592,7 +678,7 @@
         <p><strong>מספר מוביל:</strong> 073-7001212 ? <strong>מרכזייה:</strong> 3000 ? <strong>שלוחות:</strong> 073-7133XXX</p>
         <p><strong>פקס ראשי:</strong> 09-7457000 ? <strong>פקס רכש:</strong> 09-7421219 ? <strong>פקס כוכי:</strong> 09-7450549 ? <strong>פקס הנה"ח אלקטרוניקה:</strong> 09-7420013</p>
         <p><strong>חיוג לחו"ל:</strong> 013</p>
-        <p><strong>תאריך עדכון:</strong> 29.06.2025</p>
+        <p><strong>תאריך עדכון:</strong> 09.07.2025</p>
     </div>
 
     <h1 class="title">ספר טלפונים</h1>
@@ -1722,7 +1808,7 @@
         <i class="fas fa-star favorite" onclick="toggleFavorite(this)" data-name="דודו מאיר" aria-label="הוסף או הסר דודו מאיר ממועדפים"></i>
     </td>
     <td style="display: none;">
-        <input type="hidden" value="dudu@cidev.co.il">
+        <input type="hidden" value="dudu@cudev.co.il">
     </td>
 </tr>
 <tr>
@@ -1900,8 +1986,13 @@
             <i class="fas fa-cog"></i>
         </div>
         <div class="floating-button" onclick="toggleDarkMode()" aria-label="החלף מצב תצוגה כהה/בהיר">
-            <i class="fas fa-moon"></i>
-        </div>
+    <i class="fas fa-moon"></i>
+</div>
+<div class="floating-button" onclick="window.print()" aria-label="הדפס">
+    <i class="fas fa-print"></i>
+</div>
+
+
         <div class="floating-button" onclick="scrollToTop()" aria-label="גלול למעלה">
             <i class="fas fa-arrow-up"></i>
         </div>
@@ -2212,6 +2303,42 @@
             toggleSettingsModal();
         }
 
+function buildPrintView() {
+    const table = document.getElementById("phoneBook");
+    const rows = Array.from(table.tBodies[0].rows);
+    const departments = {};
+
+    rows.forEach(row => {
+        const name = row.cells[0]?.textContent.trim();
+        const department = row.cells[1]?.textContent.trim();
+        const phone = row.cells[3]?.textContent.trim();
+
+        if (!departments[department]) departments[department] = [];
+        departments[department].push({ name, phone });
+    });
+
+    const printView = document.getElementById("printView");
+    printView.innerHTML = "";
+
+    Object.keys(departments).sort().forEach(dept => {
+        const section = document.createElement("div");
+        section.className = "print-department";
+
+        const heading = document.createElement("h2");
+        heading.textContent = dept || "ללא מחלקה";
+        section.appendChild(heading);
+
+        const ul = document.createElement("ul");
+        departments[dept].forEach(entry => {
+            const li = document.createElement("li");
+            li.innerHTML = `<span>${entry.name}</span>: ${entry.phone}`;
+            ul.appendChild(li);
+        });
+
+        section.appendChild(ul);
+        printView.appendChild(section);
+    });
+}
 
 
 function applyFontSettings() {
@@ -2237,6 +2364,18 @@ document.addEventListener('DOMContentLoaded', applyFontSettings);
         document.getElementById('departmentFilter').addEventListener('change', filterTable);
         window.addEventListener('load', applyMobileView);
         window.addEventListener('resize', applyMobileView);
+window.addEventListener("beforeprint", buildPrintView);
+
     </script>
+<div id="printHeader" style="display: none;">
+    <p><strong>כתובתנו:</strong> רחוב הבנאי 3, א.ת. גיל עמל, הוד השרון 4531903</p>
+    <p><strong>מספר מוביל:</strong> 073-7001212 &nbsp;&nbsp;&nbsp; <strong>מרכזייה:</strong> 3000 &nbsp;&nbsp;&nbsp; <strong>שלוחות:</strong> 073-7133XXX</p>
+    <p><strong>פקס ראשי:</strong> 09-7457000 &nbsp;&nbsp;&nbsp; <strong>פקס רכש:</strong> 09-7421219 &nbsp;&nbsp;&nbsp; <strong>פקס כוכי:</strong> 09-7450549 &nbsp;&nbsp;&nbsp; <strong>פקס הנה"ח אלקטרוניקה:</strong> 09-7420013</p>
+    <p><strong>חיוג לחו"ל:</strong> 013</p>
+    <p><strong>תאריך עדכון:</strong> <span id="printUpdateDate"></span></p>
+</div>
+
+<div id="printView" style="display: none;"></div>
+
 </body>
 </html>
